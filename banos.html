@@ -31,8 +31,31 @@
         .logo-divider { width: 1px; height: 45px; background-color: var(--color-dark); margin-right: 15px; }
         .logo-text { font-size: 13px; font-weight: 400; line-height: 1.2; letter-spacing: 1px; text-transform: lowercase; }
         
-        .btn-back { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-brown); text-decoration: none; border: 1px solid var(--color-brown); padding: 10px 20px; border-radius: 4px; transition: all 0.3s ease; }
-        .btn-back:hover { background-color: var(--color-brown); color: var(--color-light); }
+        /* --- BOTÓN FLOTANTE (ARRIBA A LA DERECHA) --- */
+        .btn-back { 
+            position: fixed;            /* Lo fija en la pantalla */
+            top: 30px;                  /* Distancia desde arriba */
+            right: 30px;                /* Distancia desde la derecha */
+            z-index: 900;               /* Queda por encima del contenido y del header */
+            font-size: 12px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: var(--color-light); 
+            background-color: var(--color-brown); /* Fondo sólido para evitar transparencias molestos con fotos */
+            text-decoration: none; 
+            border: 1px solid var(--color-brown); 
+            padding: 14px 24px; 
+            border-radius: 50px;        /* Estilo píldora premium */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Sombra para dar volumen */
+            transition: all 0.3s ease; 
+        }
+        .btn-back:hover { 
+            background-color: var(--color-dark); 
+            border-color: var(--color-dark);
+            transform: translateY(3px); /* Leve efecto de presión hacia abajo */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
 
         /* --- TÍTULO PRINCIPAL --- */
         .page-header { padding: 60px 0 20px 0; }
@@ -75,7 +98,7 @@
             height: 280px; 
             overflow: hidden;
             background-color: var(--color-beige);
-            cursor: zoom-in; /* Cambia el cursor a una lupa con un signo + */
+            cursor: zoom-in;
         }
 
         .img-wrapper img {
@@ -107,15 +130,15 @@
             font-weight: 500;
         }
 
-        /* --- NUEVOS ESTILOS: INTERFAZ LIGHTBOX (PANTALLA COMPLETA) --- */
+        /* --- INTERFAZ LIGHTBOX (PANTALLA COMPLETA) --- */
         .lightbox-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(28, 33, 26, 0.95); /* Fondo oscuro premium acorde a la marca */
-            z-index: 1000;
+            background-color: rgba(28, 33, 26, 0.95);
+            z-index: 1000; /* Queda siempre por encima del botón flotante */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -124,7 +147,6 @@
             transition: opacity 0.4s ease-in-out;
         }
 
-        /* Clase activa que se inyecta con JS */
         .lightbox-overlay.active {
             opacity: 1;
             pointer-events: auto;
@@ -144,7 +166,6 @@
             transform: scale(1);
         }
 
-        /* Botón de cierre (X) */
         .lightbox-close {
             position: absolute;
             top: 25px;
@@ -162,7 +183,6 @@
             color: var(--color-beige);
         }
 
-        /* Bloquear scroll del cuerpo cuando esté abierto */
         body.lightbox-open {
             overflow: hidden;
         }
@@ -172,6 +192,8 @@
     </style>
 </head>
 <body>
+
+    <a href="index.html" class="btn-back">← Volver al Inicio</a>
 
     <div id="lightbox" class="lightbox-overlay">
         <span class="lightbox-close" id="lightboxClose">&times;</span>
@@ -185,7 +207,6 @@
                 <div class="logo-divider"></div>
                 <div class="logo-text">estudio<br>arquitectura<br>& diseño</div>
             </a>
-            <a href="index.html" class="btn-back">← Volver al Inicio</a>
         </header>
 
         <div class="page-header">
@@ -198,7 +219,7 @@
                 <div class="project-meta">
                     <p class="project-num">Proyecto 01</p>
                     <h3 class="project-name">Toilette Suite Premium</h3>
-                    <p class="project-desc">Una reforma integral enfocada en la optimización del espacio y texturas orgánicas. Reemplazamos cañerías obsoletas y revestimientos antiguos por un concepto spa con varillados de madera e iluminación dimerizable.</p>
+                    <p class="project-desc">Una reforma integral enfocada en la optimización del espacio y texturas orgánicas. Reemplazamos cañerías obsoletas y revestimientos antiguos por un concept spa con varillados de madera e iluminación dimerizable.</p>
                 </div>
 
                 <div class="process-grid">
@@ -310,27 +331,23 @@
             const lightboxClose = document.getElementById('lightboxClose');
             const body = document.body;
 
-            // 1. Detectar clic en cualquier imagen con la clase "zoomable-img"
             document.querySelectorAll('.zoomable-img').forEach(img => {
                 img.addEventListener('click', function() {
-                    lightboxImg.src = this.src; // Inyectar la URL de la imagen clicada
+                    lightboxImg.src = this.src;
                     lightboxImg.alt = this.alt;
-                    lightbox.classList.add('active'); // Mostrar overlay
-                    body.classList.add('lightbox-open'); // Bloquear el scroll de la web
+                    lightbox.classList.add('active');
+                    body.classList.add('lightbox-open');
                 });
             });
 
-            // 2. Cerrar al hacer clic en la cruz (X)
             lightboxClose.addEventListener('click', closeLightbox);
 
-            // 3. Cerrar al hacer clic en cualquier parte del fondo oscuro
             lightbox.addEventListener('click', function(e) {
                 if (e.target === lightbox) {
                     closeLightbox();
                 }
             });
 
-            // 4. Soporte de accesibilidad: Cerrar con la tecla Escape (Esc)
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && lightbox.classList.contains('active')) {
                     closeLightbox();
