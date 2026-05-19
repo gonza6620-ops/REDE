@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refacciones Baños | REDE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES DE COLOR --- */
+        :root {
+            --color-dark: #1C211A;
+            --color-brown: #5E4638;
+            --color-sage: #7C8068;
+            --color-beige: #E5E0D8;
+            --color-light: #F8F7F5;
+            --color-muted: #8A8A8A;
+        }
+
+        /* --- ESTILOS GLOBALES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-family: 'Montserrat', sans-serif; background-color: var(--color-light); color: var(--color-dark); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- HEADER --- */
+        header { padding: 40px 0; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-beige); }
+        .logo-box { display: flex; align-items: center; text-decoration: none; color: inherit; }
+        .logo-main { font-size: 38px; font-weight: 800; line-height: 0.8; letter-spacing: -1px; text-transform: lowercase; margin-right: 15px; }
+        .logo-divider { width: 1px; height: 45px; background-color: var(--color-dark); margin-right: 15px; }
+        .logo-text { font-size: 13px; font-weight: 400; line-height: 1.2; letter-spacing: 1px; text-transform: lowercase; }
+        
+        .btn-back { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-brown); text-decoration: none; border: 1px solid var(--color-brown); padding: 10px 20px; border-radius: 4px; transition: all 0.3s ease; }
+        .btn-back:hover { background-color: var(--color-brown); color: var(--color-light); }
+
+        /* --- TÍTULO PRINCIPAL --- */
+        .page-header { padding: 60px 0 20px 0; }
+        .page-title { font-size: 32px; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; }
+        .page-subtitle { font-size: 14px; color: var(--color-sage); font-weight: 500; margin-top: 10px; letter-spacing: 1px; }
+
+        /* --- BLOQUE DE PROYECTO (Cada uno de los 5 baños) --- */
+        .project-block {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--color-beige);
+        }
+        .project-block:last-child { border-bottom: none; }
+
+        .project-meta {
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+        .project-num { font-size: 12px; font-weight: 700; color: var(--color-brown); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .project-name { font-size: 22px; font-weight: 600; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .project-desc { font-size: 14px; color: #555; line-height: 1.6; }
+
+        /* --- CRONOLOGÍA BI-COLUMNA (Antes / Después) --- */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .process-card {
+            background-color: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 280px; 
+            overflow: hidden;
+            background-color: var(--color-beige);
+            cursor: zoom-in; /* Cambia el cursor a una lupa con un signo + */
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .process-card:hover .img-wrapper img {
+            transform: scale(1.04);
+        }
+
+        .process-info {
+            padding: 18px;
+            border-top: 1px solid rgba(0,0,0,0.02);
+        }
+        .process-step {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--color-sage);
+            margin-bottom: 4px;
+        }
+        .process-detail {
+            font-size: 13px;
+            color: var(--color-dark);
+            font-weight: 500;
+        }
+
+        /* --- NUEVOS ESTILOS: INTERFAZ LIGHTBOX (PANTALLA COMPLETA) --- */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(28, 33, 26, 0.95); /* Fondo oscuro premium acorde a la marca */
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        /* Clase activa que se inyecta con JS */
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-image {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.4s ease-in-out;
+            object-fit: contain;
+        }
+
+        .lightbox-overlay.active .lightbox-image {
+            transform: scale(1);
+        }
+
+        /* Botón de cierre (X) */
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: var(--color-light);
+            font-size: 35px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+            user-select: none;
+        }
+        
+        .lightbox-close:hover {
+            transform: scale(1.1);
+            color: var(--color-beige);
+        }
+
+        /* Bloquear scroll del cuerpo cuando esté abierto */
+        body.lightbox-open {
+            overflow: hidden;
+        }
+
+        /* --- FOOTER --- */
+        footer { background-color: var(--color-dark); color: var(--color-light); padding: 40px 0; text-align: center; font-size: 12px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <div id="lightbox" class="lightbox-overlay">
+        <span class="lightbox-close" id="lightboxClose">&times;</span>
+        <img src="" alt="Vista ampliada" class="lightbox-image" id="lightboxImg">
+    </div>
+
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo-box">
+                <div class="logo-main">re<br>de</div>
+                <div class="logo-divider"></div>
+                <div class="logo-text">estudio<br>arquitectura<br>& diseño</div>
+            </a>
+            <a href="index.html" class="btn-back">← Volver al Inicio</a>
+        </header>
+
+        <div class="page-header">
+            <h2 class="page-title">Refacciones / Baños</h2>
+            <p class="page-subtitle">Comparativa directa del antes y el después en nuestros 5 proyectos destacados. Haz clic en las imágenes para ampliarlas.</p>
+        </div>
+
+        <main>
+            <section class="project-block">
+                <div class="project-meta">
+                    <p class="project-num">Proyecto 01</p>
+                    <h3 class="project-name">Toilette Suite Premium</h3>
+                    <p class="project-desc">Una reforma integral enfocada en la optimización del espacio y texturas orgánicas. Reemplazamos cañerías obsoletas y revestimientos antiguos por un concepto spa con varillados de madera e iluminación dimerizable.</p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano1_antes.jpg" alt="Estado inicial baño 1" class="zoomable-img"></div>
+                        <div class="process-info">
+                            <p class="process-step">01. Estado Inicial</p>
+                            <p class="process-detail">Revestimientos cerámicos desgastados y distribución poco funcional.</p>
+                        </div>
+                    </div>
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano1_despues.jpg" alt="Resultado final baño 1" class="zoomable-img"></div>
+                        <div class="process-info">
+                            <p class="process-step">02. Resultado Final</p>
+                            <p class="process-detail">Colocación de sanitarios suspendidos, revestimientos premium y acabados finales.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="project-block">
+                <div class="project-meta">
+                    <p class="project-num">Proyecto 02</p>
+                    <h3 class="project-name">Baño Principal Minimalista</h3>
+                    <p class="project-desc">Diseño basado en líneas puras y superficies continuas. La utilización de microcemento eliminó las juntas visuales, logrando una sensación de amplitud única.</p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano2_antes.jpg" alt="Antes baño 2" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">01. Estado Viejo</p><p class="process-detail">Sanitarios antiguos y falta de entrada de luz natural.</p></div>
+                    </div>
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano2_despues.jpg" alt="Después baño 2" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">02. Terminación</p><p class="process-detail">Superficies continuas de microcemento y griferías empotradas negro mate colocadas.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="project-block">
+                <div class="project-meta">
+                    <p class="project-num">Proyecto 03</p>
+                    <h3 class="project-name">Baño de Visitas Industrial</h3>
+                    <p class="project-desc">Incorporación de elementos metálicos oscuros y texturas crudas texturizadas. Una estética moderna pensada para alto tránsito de mantenimiento simple.</p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano3_antes.jpg" alt="Antes baño 3" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">01. Original</p><p class="process-detail">Layout obsoleto con bañera masiva incómoda y revestimientos dañados.</p></div>
+                    </div>
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano3_despues.jpg" alt="Después baño 3" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">02. Resultado Final</p><p class="process-detail">Plato de ducha a nivel de piso terminado y mampara industrial de hierro instalada.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="project-block">
+                <div class="project-meta">
+                    <p class="project-num">Proyecto 04</p>
+                    <h3 class="project-name">Spa Residencial Integrado</h3>
+                    <p class="project-desc">Reforma de gran escala para añadir zona de hidromasaje y revestimientos en piedra natural sinterizada de alta resistencia.</p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano4_antes.jpg" alt="Antes baño 4" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">01. Original</p><p class="process-detail">Instalaciones e infraestructura deterioradas previas al desmontaje.</p></div>
+                    </div>
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano4_despues.jpg" alt="Después baño 4" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">02. Resultado Final</p><p class="process-detail">Grandes piezas cerámicas colocadas, zona de confort e iluminación LED oculta en cielorraso.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="project-block">
+                <div class="project-meta">
+                    <p class="project-num">Proyecto 05</p>
+                    <h3 class="project-name">Toilette de Recepción Compacto</h3>
+                    <p class="project-desc">Desafío de diseño en pocos metros cuadrados. Implementamos espejos de gran formato y bacha exenta para maximizar la percepción espacial.</p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano5_antes.jpg" alt="Antes baño 5" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">01. Espacio Base</p><p class="process-detail">Habitación antigua sin revestir utilizada previamente como depósito.</p></div>
+                    </div>
+                    <div class="process-card">
+                        <div class="img-wrapper"><img src="bano5_despues.jpg" alt="Después baño 5" class="zoomable-img"></div>
+                        <div class="process-info"><p class="process-step">02. Interiorismo Final</p><p class="process-detail">Maximización espacial con espejos de gran formato y mobiliario minimalista flotante.</p></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 REDE Estudio. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const body = document.body;
+
+            // 1. Detectar clic en cualquier imagen con la clase "zoomable-img"
+            document.querySelectorAll('.zoomable-img').forEach(img => {
+                img.addEventListener('click', function() {
+                    lightboxImg.src = this.src; // Inyectar la URL de la imagen clicada
+                    lightboxImg.alt = this.alt;
+                    lightbox.classList.add('active'); // Mostrar overlay
+                    body.classList.add('lightbox-open'); // Bloquear el scroll de la web
+                });
+            });
+
+            // 2. Cerrar al hacer clic en la cruz (X)
+            lightboxClose.addEventListener('click', closeLightbox);
+
+            // 3. Cerrar al hacer clic en cualquier parte del fondo oscuro
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            // 4. Soporte de accesibilidad: Cerrar con la tecla Escape (Esc)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    closeLightbox();
+                }
+            });
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                body.classList.remove('lightbox-open');
+            }
+        });
+    </script>
+
+</body>
+</html>
